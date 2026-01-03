@@ -1,6 +1,5 @@
-# 利用httpx模块发送http请求,带请求头和cookie
+# 利用httpx模块发送http请求
 import httpx
-
 from tqdm import tqdm
 
 headers = {
@@ -25,7 +24,6 @@ cookies = {
 }
 
 
-
 def get_page_data(i):
     url = f"https://www.spiderdemo.cn/sec1/api/challenge/page/{i}/"
     params = {
@@ -36,10 +34,10 @@ def get_page_data(i):
     data = response.json()["page_data"]
     return sum(data)
 
+
 if __name__ == '__main__':
     total = 0
     for i in tqdm(range(1, 101)):
         total += get_page_data(i)
 
     print(total)
-
