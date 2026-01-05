@@ -3,20 +3,9 @@ import time
 import requests
 from tqdm import tqdm
 
+# 请求头校验比较宽松,只要ua 和 cookie 都符合要求即可
 headers = {
-    'Host': 'www.spiderdemo.cn',
-    'Sec-Ch-Ua-Platform': '"Windows"',
-    'X-Requested-With': 'XMLHttpRequest',
-    'Accept-Language': 'zh-CN,zh;q=0.9',
-    'Accept': 'application/json, text/javascript, */*; q=0.01',
-    'Sec-Ch-Ua': '"Not_A Brand";v="99", "Chromium";v="142"',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-    'Sec-Ch-Ua-Mobile': '?0',
-    'Sec-Fetch-Site': 'same-origin',
-    'Sec-Fetch-Mode': 'cors',
-    'Referer': 'https://www.spiderdemo.cn/sec1/header_check/',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Priority': 'u=1, i'
 }
 
 cookies = {
@@ -54,7 +43,7 @@ def get_page_data(i):
         "sign": sign,
         "timestamp": timestamp
     }
-    response = requests.get(url,headers=headers, cookies=cookies, params=params)
+    response = requests.get(url, headers=headers, cookies=cookies, params=params)
     # print(response.text)
     data = response.json()["page_data"]
 

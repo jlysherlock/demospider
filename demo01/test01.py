@@ -3,24 +3,21 @@ import httpx
 from tqdm import tqdm
 
 headers = {
-    'Host': 'www.spiderdemo.cn',
-    'Sec-Ch-Ua-Platform': '"Windows"',
-    'X-Requested-With': 'XMLHttpRequest',
-    'Accept-Language': 'zh-CN,zh;q=0.9',
-    'Accept': 'application/json, text/javascript, */*; q=0.01',
-    'Sec-Ch-Ua': '"Not_A Brand";v="99", "Chromium";v="142"',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-    'Sec-Ch-Ua-Mobile': '?0',
-    'Sec-Fetch-Site': 'same-origin',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Dest': 'empty',
-    'Referer': 'https://www.spiderdemo.cn/sec1/header_check/',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Priority': 'u=1, i'
+    "accept": "application/json, text/javascript, */*; q=0.01",
+    "accept-language": "zh-CN,zh;q=0.9",
+    "priority": "u=1, i",
+    "referer": "https://www.spiderdemo.cn/sec1/header_check/",
+    "sec-ch-ua": "\"Not A(Brand\";v=\"8\", \"Chromium\";v=\"132\", \"Google Chrome\";v=\"132\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
+    "x-requested-with": "XMLHttpRequest"
 }
-
 cookies = {
-    "sessionid": "6ycyvjk4fby8z0t3l87veiygavbxlxmn"
+    "sessionid": "hy0iomsjkupivfg72vn5xzcti5v9fdwr"
 }
 
 
@@ -29,8 +26,10 @@ def get_page_data(i):
     params = {
         "challenge_type": "header_check"
     }
+    # with httpx.Client(headers=headers, cookies=cookies) as client:
+    #     response = client.get(url, params=params)
     response = httpx.get(url, headers=headers, cookies=cookies, params=params)
-
+    # print(response.text)
     data = response.json()["page_data"]
     return sum(data)
 
