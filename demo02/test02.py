@@ -16,11 +16,11 @@ headers = {
     'Sec-Ch-Ua-Mobile': '?0',
     'Sec-Fetch-Site': 'same-origin',
     'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Dest': 'empty',
     'Referer': 'https://www.spiderdemo.cn/sec1/header_check/',
     'Accept-Encoding': 'gzip, deflate, br',
     'Priority': 'u=1, i'
 }
+
 
 cookies = {
     "sessionid": "6ycyvjk4fby8z0t3l87veiygavbxlxmn"
@@ -40,8 +40,6 @@ def get_hex_md5_signature(timestamp, page):
     md5_hash = hashlib.md5(data_with_salt)
     # 4. 获取 16 进制的加密结果 (对应 hex_md5)
     return md5_hash.hexdigest()
-
-
 
 def get_page_data(i):
     timestamp = str(int(time.time() * 1000))
