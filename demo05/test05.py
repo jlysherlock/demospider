@@ -7,7 +7,6 @@ from PIL import Image, ImageDraw, ImageFont
 import ddddocr
 from tqdm import tqdm
 
-
 headers = {
     "accept": "application/json, text/javascript, */*; q=0.01",
     "accept-language": "zh-CN,zh;q=0.9",
@@ -25,7 +24,7 @@ headers = {
     "x-requested-with": "XMLHttpRequest"
 }
 cookies = {
-    "sessionid": "hy0iomsjkupivfg72vn5xzcti5v9fdwr"
+    "sessionid": "ckghytgabix5f8r69z6l8imgv6ij55l5"
 }
 
 
@@ -62,29 +61,26 @@ def font_to_mapping(font_path):
         # 将 code 转为字符 (例如 0x30 -> '0')
         char = chr(code)
         # 创建一个白色背景的小画布
-        img = Image.new('RGB', (50, 50), (255, 255, 255))
+        img = Image.new('RGB', (60, 60), (255, 255, 255))
         draw = ImageDraw.Draw(img)
         # 获取字符大小以便居中（兼容新旧版本 Pillow）
-        try:
-            left, top, right, bottom = draw.textbbox((0, 0), char, font=pil_font)
-            w, h = right - left, bottom - top
-        except AttributeError:
-            w, h = draw.textsize(char, font=pil_font)
-
+        # 返回 (left, top, right, bottom) 的像素坐标 左上角 右下脚坐标
+        bbox = pil_font.getbbox(char)
+        w = bbox[2] - bbox[0]
+        h = bbox[3] - bbox[1]
         # 在画布中央绘制字符
-        draw.text(((60 - w) / 2, (60 - h) / 2 - 5), char, font=pil_font, fill=(0, 0, 0))
+        draw.text(((60 - w) / 2, (60 - h) / 2), char, font=pil_font, fill=(0, 0, 0))
         # 将图片转为 bytes 传给 OCR
         img_byte_arr = io.BytesIO()
         img.save(img_byte_arr, format='PNG')
         img_bytes = img_byte_arr.getvalue()
         # OCR 识别
         res = ocr.classification(img_bytes)
-
         # 5. 保存图片到本地
-        # 文件名格式：十六进制编码_识别结果.png
-        img_filename = f"{hex(code)}_{res}.png"
+        # 文件名格式：字符_识别结果.png
+        save_dir = "images"
+        img_filename = f"{char}_{res}.png"
         img.save(os.path.join(save_dir, img_filename))
-        # print(res)
         # 识别结果可能存在错误，这里将一些常见错误映射为正确结果
         confuse_map = {'O': '0', 'o': '0', 'D': '0', 'I': '1', 'l': '1', 'z': '2', 'Z': '2', 'S': '5', 's': '5'}
         # 将错误映射为正确结果 如果为数字，则返回数字本身  如果为字母，则返回对应的数字
@@ -99,7 +95,7 @@ def font_to_mapping(font_path):
 # 执行
 if __name__ == "__main__":
     total = 0
-    for i in tqdm(range(1, 101)):
+    for i in tqdm(range(6, 7)):
         page_data = get_page_data(i)
         # print(page_data)
         # 获取字体映射关系
