@@ -95,7 +95,7 @@ def font_to_mapping(font_path):
 # 执行
 if __name__ == "__main__":
     total = 0
-    for i in tqdm(range(6, 7)):
+    for i in tqdm(range(1, 101)):
         page_data = get_page_data(i)
         # print(page_data)
         # 获取字体映射关系
