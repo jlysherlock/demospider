@@ -1,6 +1,7 @@
 import requests
 import base64
 import io
+import os
 from fontTools.ttLib import TTFont
 from PIL import Image, ImageDraw, ImageFont
 import ddddocr
@@ -63,15 +64,26 @@ def font_to_mapping(font_path):
         # 创建一个白色背景的小画布
         img = Image.new('RGB', (50, 50), (255, 255, 255))
         draw = ImageDraw.Draw(img)
-        # 将字符画在画布中央 (黑色)
-        # 注意：有些反爬字体的 Unicode 可能是自定义区域，直接 chr(code) 就能画出来
-        draw.text((5, 5), char, font=pil_font, fill=(0, 0, 0))
+        # 获取字符大小以便居中（兼容新旧版本 Pillow）
+        try:
+            left, top, right, bottom = draw.textbbox((0, 0), char, font=pil_font)
+            w, h = right - left, bottom - top
+        except AttributeError:
+            w, h = draw.textsize(char, font=pil_font)
+
+        # 在画布中央绘制字符
+        draw.text(((60 - w) / 2, (60 - h) / 2 - 5), char, font=pil_font, fill=(0, 0, 0))
         # 将图片转为 bytes 传给 OCR
         img_byte_arr = io.BytesIO()
         img.save(img_byte_arr, format='PNG')
         img_bytes = img_byte_arr.getvalue()
         # OCR 识别
         res = ocr.classification(img_bytes)
+
+        # 5. 保存图片到本地
+        # 文件名格式：十六进制编码_识别结果.png
+        img_filename = f"{hex(code)}_{res}.png"
+        img.save(os.path.join(save_dir, img_filename))
         # print(res)
         # 识别结果可能存在错误，这里将一些常见错误映射为正确结果
         confuse_map = {'O': '0', 'o': '0', 'D': '0', 'I': '1', 'l': '1', 'z': '2', 'Z': '2', 'S': '5', 's': '5'}
