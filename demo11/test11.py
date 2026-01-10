@@ -4,9 +4,8 @@ import ddddocr
 from PIL import Image
 import json
 
-
 cookies = {
-    "sessionid": "orocjnlfhgbcsocvzpgiwg75m7esc0sp"
+    "sessionid": "3y0loy16xvmwq1sss127ovioala5cpkb"
 }
 
 
@@ -72,26 +71,40 @@ def get_page_data(i, result):
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.95 Safari/537.36",
         "x-requested-with": "XMLHttpRequest"
     }
-    url = "https://www.spiderdemo.cn/captcha/api/cap1_challenge/page/"
-    data = {
-        "captcha_input": result,
-        "page_num": i,
-        "challenge_type": "cap1_challenge"
-    }
-    res = requests.post(url, headers=headers, cookies=cookies, json=data)
+    if i != 1:
+        url = "https://www.spiderdemo.cn/captcha/api/cap1_challenge/page/"
+        data = {
+            "captcha_input": result,
+            "page_num": i,
+            "challenge_type": "cap1_challenge"
+        }
+        res = requests.post(url, headers=headers, cookies=cookies, json=data)
+    else:
+        url = "https://www.spiderdemo.cn/captcha/api/cap1_challenge/init/"
+        params = {
+            "challenge_type": "cap1_challenge"
+        }
+        res = requests.get(url, headers=headers, cookies=cookies, params=params)
     print(res.json())
     return res.json()
 
 
 if __name__ == '__main__':
     total = 0
-    for i in range(1, 6):
-        while True:
+    # 第一页不需要获取验证码
+    print(f"正在获取第 1 页数据...")
+    total += sum(get_page_data(1, "")["page_data"])
+    # 第二页开始要获取验证码
+    for i in range(2, 101):
+        print(f"正在获取第 {i} 页数据...")
+        flag = True
+        while flag:
             get_captcha()
             result = ocr_captcha("captcha.png")
             response = get_page_data(i, result)
-            if response["success"] == "true":
+            if response["success"]:
                 total += sum(response["page_data"])
-                break
+                print(total)
+                flag = False
             else:
-                print("验证码错误")
+                print(f"第 {i} 页验证码错误，正在重试...")
