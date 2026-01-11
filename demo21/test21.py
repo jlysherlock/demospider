@@ -5,12 +5,12 @@ import hmac
 
 
 def calculate_hashes(page, timestamp):
-    # 对应 JavaScript 中的 s + o
+
     o = "spiderdemo_sha_salt_2025"
     t = "hash_challenge"
     c = "spiderdemo_hmac_secret_2025"
     message = f"{str(page)}_{t}_{timestamp}"
-
+    # 对应 JavaScript 中的 s + o
     combined_string = message + o
     # 将字符串编码为 bytes (哈希运算需要字节流)
     data_bytes = combined_string.encode('utf-8')
